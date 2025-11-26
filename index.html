@@ -5,116 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>せんくシェフの献立メーカー</title>
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #fff8f0;
-            color: #333;
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-            background: linear-gradient(to bottom, #fff8f0, #ffe8d6);
-        }
-        h1 {
-            text-align: center;
-            color: #e67e22;
-            font-size: 28px;
-        }
-        .senku {
-            width: 180px;
-            height: 240px;
-            background: #555;
-            border-radius: 12px;
-            margin: 20px auto;
-            background-image: url('https://via.placeholder.com/180x240/555555/ffffff?text=せんくくん');
-            background-size: cover;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .input-area {
-            margin: 20px 0;
-        }
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 15px 0;
-        }
-        .tag {
-            background: #f39c12;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 30px;
-            font-size: 14px;
-        }
-        input {
-            padding: 12px;
-            width: 100%;
-            border: 2px solid #eee;
-            border-radius: 12px;
-            font-size: 16px;
-        }
-        button {
-            background: #e67e22;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        button:hover {
-            background: #d35400;
-        }
-        .result {
-            margin-top: 30px;
-            padding: 20px;
-            background: #fdfd96;
-            border-radius: 12px;
-            display: none;
-        }
-        .dish {
-            background: white;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 12px;
-            border-left: 5px solid #e67e22;
-        }
-        .comment {
-            margin-top: 15px;
-            font-style: italic;
-            color: #555;
-            background: #f8f8f8;
-            padding: 12px;
-            border-radius: 8px;
-        }
-        .random-btn {
-            background: #95a5a6;
-            margin-left: 10px;
-        }
-        .random-btn:hover {
-            background: #7f8c8d;
-        }
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,#fff8f0,#ffe8d6);color:#333;max-width:800px;margin:40px auto;padding:20px;}
+        h1{text-align:center;color:#e67e22;font-size:28px;}
+        .senku{width:180px;height:240px;background:#666;border-radius:12px;margin:20px auto;display:flex;align-items:center;justify-content:center;color:white;font-size:14px;background:#555 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 240"><text x="90" y="120" text-anchor="middle" fill="%23fff" font-size="18">せんくくん</text><text x="90" y="145" text-anchor="middle" fill="%23fff" font-size="12">（立ち絵準備中）</text></svg>') center/cover;}
+        .container{background:white;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);}
+        input{padding:14px;width:100%;border:2px solid #eee;border-radius:12px;font-size:16px;box-sizing:border-box;}
+        button{background:#e67e22;color:white;border:none;padding:12px 24px;border-radius:12px;cursor:pointer;font-weight:bold;margin:5px;}
+        button:hover{background:#d35400;}
+        .random-btn{background:#95a5a6;}
+        .random-btn:hover{background:#7f8c8d;}
+        .tags{display:flex;flex-wrap:wrap;gap:10px;margin:15px 0;}
+        .tag{background:#f39c12;color:white;padding:8px 16px;border-radius:30px;font-size:14px;cursor:pointer;}
+        .result{margin-top:30px;padding:20px;background:#fdfd96;border-radius:12px;display:none;}
+        .dish{background:white;padding:15px;margin:10px 0;border-radius:12px;border-left:5px solid #e67e22;}
+        .comment{margin-top:10px;font-style:italic;color:#555;background:#f8f8f8;padding:12px;border-radius:8px;}
     </style>
 </head>
 <body>
     <h1>せんくシェフの献立メーカー</h1>
-    <div class="senku"></div>
+    <div class="senku">せんくくん</div>
     
     <div class="container">
-        <div class="input-area">
-            <p style="text-align:center;color:#777;">冷蔵庫にある食材を入れてみて</p>
-            <input type="text" id="input" placeholder="例：鶏もも肉 玉ねぎ 卵" autofocus>
-            <div style="text-align:center;margin:20px 0;">
-                <button onclick="search()">この食材で作れるもの</button>
-                <button class="random-btn" onclick="randomMenu()">今日の俺の気分</button>
-            </div>
-            <div class="tags" id="tags"></div>
+        <p style="text-align:center;color:#777;">冷蔵庫にある食材を入れてみて</p>
+        <input type="text" id="input" placeholder="例：鶏もも肉 玉ねぎ 卵" autofocus>
+        <div style="text-align:center;margin:20px 0;">
+            <button onclick="search()">この食材で作れるもの</button>
+            <button class="random-btn" onclick="randomMenu()">今日の俺の気分</button>
         </div>
+        <div class="tags" id="tags"></div>
 
         <div class="result" id="result">
             <h3>……これでいいんじゃないか</h3>
@@ -123,116 +41,86 @@
     </div>
 
     <script>
-        // 献立データ（さっきのJSONをここに全部ぶち込む）
-        const recipes = {
-            "recipes": [
-                {"ingredients": ["鶏もも肉", "玉ねぎ"], "dishes": [
-                    {"name": "親子丼", "time": "15分", "comment": "……玉ねぎの甘さ引き出すなら、最初に強火で炒めてから卵でとじる。ダシはめんつゆ3倍希釈で十分。失敗しないよ。"},
-                    {"name": "鶏と玉ねぎの黒胡椒炒め", "time": "10分", "comment": "油少なめでいい。塩は最後に。黒胡椒はガリガリ挽いて。香りが全然違う。"}
-                ]},
-                {"ingredients": ["豚バラ", "キャベツ"], "dishes": [
-                    {"name": "超簡単回鍋肉", "time": "12分", "comment": "味噌と豆板醤同量、砂糖ちょっと。キャベツは最後にサッとでいい。シャキシャキ残した方が美味い。"}
-                ]},
-                {"ingredients": ["豚こま", "なす"], "dishes": [
-                    {"name": "なすと豚の甘辛炒め", "time": "10分", "comment": "なすは乱切りで油通し不要。豚から出る脂でそのまま炒めれば十分味つく。仕上げに鷹の爪振るか振らないかはお前次第。"}
-                ]},
-                {"ingredients": ["ツナ缶", "キャベツ"], "dishes": [
-                    {"name": "ツナキャベツ", "time": "5分", "comment": "……これ最強。ツナ缶の油ごと全部入れる。塩コショウだけ。マジで5分で食える。俺の冷蔵庫常備。"}
-                ]},
-                {"ingredients": ["豆腐", "ねぎ", "生姜"], "dishes": [
-                    {"name": "冷や奴アレンジ", "time": "3分", "comment": "豆腐はキムチのせてもいいけど、ねぎと生姜あればそれで完結。醤油はかけすぎ注意。味が死ぬ。"}
-                ]}
-            ],
-            "randomComments": [
-                "……今日はこれでいいんじゃない？",
-                "悪くない組み合わせだ。",
-                "まぁ、失敗はしないと思う。",
-                "ん。俺ならこうする。",
-                "……腹減ったな。これで決まりだろ。"
-            ]
-        };
+        const recipes = { "recipes": [
+            {"ingredients": ["鶏もも肉", "玉ねぎ"], "dishes": [
+                {"name": "親子丼", "time": "15分", "comment": "玉ねぎは薄切りにして強火で1分炒める。めんつゆ（3倍希釈）150ml＋水100mlで煮て、溶き卵2個を2回に分けて流す。失敗しない。"},
+                {"name": "鶏と玉ねぎの黒胡椒炒め", "time": "10分", "comment": "油少なめ。鶏肉は一口大に切って塩少々。最後に黒胡椒ガリガリ。香りが全然違う。"}
+            ]},
+            {"ingredients": ["豚バラ", "キャベツ"], "dishes": [
+                {"name": "超簡単回鍋肉", "time": "12分", "comment": "豚バラ→キャベツの順で炒める。味噌大1＋豆板醤大1＋砂糖小1＋醤油小1。キャベツは最後に30秒でシャキシャキ残す。"}
+            ]},
+            {"ingredients": ["豚こま", "なす"], "dishes": [
+                {"name": "なすと豚の甘辛炒め", "time": "10分", "comment": "なすは乱切り。豚から出る脂だけで炒められる。仕上げに醤油大1＋みりん大1＋砂糖小1＋鷹の爪1本（好みで）"}
+            ]},
+            {"ingredients": ["ツナ缶", "キャベツ"], "dishes": [
+                {"name": "ツナキャベツ", "time": "5分", "comment": "ツナ缶の油ごと全部投入。塩コショウだけ。マヨネーズかけてもいい。俺はいつもこれ。"}
+            ]},
+            {"ingredients": ["豆腐", "ねぎ", "生姜"], "dishes": [
+                {"name": "冷や奴アレンジ", "time": "3分", "comment": "豆腐冷たいまま。ねぎみじん切り＋生姜すりおろし山盛り。醤油はかけすぎ厳禁。"}
+            ]}
+            // ← ここに後で50個追加していく！
+        ], "randomComments": ["……今日はこれでいいんじゃない？","悪くない組み合わせだ。","まぁ、失敗はしないと思う。","ん。俺ならこうする。","……腹減ったな。これで決まりだろ。"] };
 
         let currentTags = [];
 
-        document.getElementById('input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const val = this.value.trim();
-                if (val && !currentTags.includes(val)) {
-                    currentTags.push(val);
-                    addTag(val);
-                    this.value = '';
-                }
-                search();
-            }
+        document.getElementById('input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') addIngredient();
         });
 
-        function addTag(text) {
-            const tagsDiv = document.getElementById('tags');
-            const tag = document.createElement('span');
-            tag.className = 'tag';
-            tag.textContent = text;
-            tag.onclick = () => {
-                currentTags = currentTags.filter(t => t !== text);
-                tag.remove();
+        function addIngredient() {
+            const val = document.getElementById('input').value.trim();
+            if (val && !currentTags.includes(val)) {
+                currentTags.push(val);
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.textContent = val;
+                tag.onclick = () => { currentTags = currentTags.filter(t => t !== val); tag.remove(); search(); };
+                document.getElementById('tags').appendChild(tag);
+                document.getElementById('input').value = '';
                 search();
-            };
-            tagsDiv.appendChild(tag);
+            }
         }
 
         function search() {
-            const result = document.getElementById('result');
             const dishesDiv = document.getElementById('dishes');
             dishesDiv.innerHTML = '';
-            
-            if (currentTags.length === 0) {
-                result.style.display = 'none';
-                return;
-            }
-
             let found = false;
+
+            // 複数レシピがヒットした場合 → 全部表示＋ランダムで順番シャッフル
+            const matchedDishes = [];
             for (const recipe of recipes.recipes) {
-                const matchCount = recipe.ingredients.filter(i => currentTags.includes(i)).length;
-                if (matchCount >= recipe.ingredients.length - 1 || (matchCount === recipe.ingredients.length)) {
-                    recipe.dishes.forEach(dish => {
-                        const div = document.createElement('div');
-                        div.className = 'dish';
-                        div.innerHTML = `
-                            <strong>${dish.name}</strong>（${dish.time}）<br>
-                            <div class="comment">「${dish.comment}」</div>
-                        `;
-                        dishesDiv.appendChild(div);
-                        found = true;
-                    });
+                const required = recipe.ingredients;
+                const hasAll = required.every(i => currentTags.includes(i));
+                const hasMost = required.filter(i => currentTags.includes(i)).length >= required.length - 1;
+                if (hasAll || hasMost) {
+                    recipe.dishes.forEach(dish => matchedDishes.push(dish));
+                    found = true;
                 }
             }
 
-            if (!found) {
-                dishesDiv.innerHTML = '<div class="dish">……んー、ちょっと厳しい組み合わせだな。でも冷蔵庫開けてみれば何かできるだろ。</div>';
+            if (matchedDishes.length > 0) {
+                // ランダム並び替え
+                matchedDishes.sort(() => Math.random() - 0.5);
+                matchedDishes.forEach(dish => {
+                    const div = document.createElement('div');
+                    div.className = 'dish';
+                    div.innerHTML = `<strong>${dish.name}</strong>（${dish.time}）<div class="comment">「${dish.comment}」</div>`;
+                    dishesDiv.appendChild(div);
+                });
+            } else {
+                dishesDiv.innerHTML = '<div class="dish">……ちょっと厳しいな。でも冷蔵庫もう一回見てみろよ。何かあるはずだ。</div>';
             }
-            result.style.display = 'block';
+            document.getElementById('result').style.display = 'block';
         }
 
         function randomMenu() {
             currentTags = [];
             document.getElementById('tags').innerHTML = '';
-            document.getElementById('input').value = '';
-            
-            const randomRecipe = recipes.recipes[Math.floor(Math.random() * recipes.recipes.length)];
-            const randomDish = randomRecipe.dishes[Math.floor(Math.random() * randomRecipe.dishes.length)];
-            const comment = recipes.randomComments[Math.floor(Math.random() * recipes.randomComments.length)];
-            
-            randomRecipe.ingredients.forEach(i => {
-                currentTags.push(i);
-                addTag(i);
-            });
-
-            const dishesDiv = document.getElementById('dishes');
-            dishesDiv.innerHTML = `
-                <div class="dish">
-                    <strong>${randomDish.name}</strong>（${randomDish.time}）<br>
-                    <div class="comment">「${comment} ${randomDish.comment}」</div>
-                </div>
-            `;
+            const r = recipes.recipes[Math.floor(Math.random()*recipes.recipes.length)];
+            const dish = r.dishes[Math.floor(Math.random()*r.dishes.length)];
+            const comment = recipes.randomComments[Math.floor(Math.random()*recipes.randomComments.length)];
+            r.ingredients.forEach(i => { currentTags.push(i); addIngredient(); });
+            document.getElementById('dishes').innerHTML = `<div class="dish"><strong>${dish.name}</strong>（${dish.time}）<div class="comment">「${comment} ${dish.comment}」</div></div>`;
             document.getElementById('result').style.display = 'block';
         }
     </script>
