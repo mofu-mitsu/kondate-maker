@@ -47,7 +47,7 @@
 
     <script>
         // 食材名正規化（玉ねぎ問題完全解決）
-        const normalize = text => text.replace(/玉ねぎ|タマネギ|玉葱/gi, "玉ねぎ")
+        const normalize = text => text.replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
                                      .replace(/鶏肉|鶏もも|鶏もも肉/gi, "鶏もも肉")
                                      .replace(/豚肉|豚バラ|豚こま/gi, "豚肉")
                                      .replace(/ほうれん草|ホウレン草/gi, "ほうれん草");
