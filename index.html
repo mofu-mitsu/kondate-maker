@@ -418,11 +418,8 @@
         <a href="https://mofu-mitsu.github.io/" class="back-top"><i class="fas fa-home"></i> TOPへ戻る</a>
     </footer>
 
-    <script>
-        // 置き換えスクリプト追加
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-        // 1つのnormalize関数に全部統合！！！これで絶対動く！！
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+<script>
+        // ★★★ 文字列を整える関数 ★★★
         const normalize = (str) => {
             return str
                 .replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
@@ -438,9 +435,10 @@
                 .replace(/さば|鯖/gi, "さば")
                 .trim();
         };
-        // ★表情管理ロジックを強化
+
+        // ★★★ 表情管理ロジック ★★★
         let blinkInterval;
-        let isReacting = false; // リアクション中かどうかのフラグ
+        let isReacting = false; 
 
         function setMainImage(filename) {
             const main = document.getElementById('senkuMain');
@@ -448,11 +446,9 @@
         }
 
         function startBlinking() {
-            // 既に動いていたら一旦クリア
             if (blinkInterval) clearInterval(blinkInterval);
-            
             blinkInterval = setInterval(() => {
-                if (!isReacting) { // リアクション中でなければ瞬き
+                if (!isReacting) {
                     setMainImage('senku-main-blink.png');
                     setTimeout(() => {
                         if (!isReacting) setMainImage('senku-main.png');
@@ -461,19 +457,73 @@
             }, 4500);
         }
 
-        // 最初のまばたき開始
         startBlinking();
 
-        // レシピ決定時の処理
-        // 通常検索（あいまい検索OK）
+        // ★★★ 共通：レシピを画面に表示する関数（ここを分離してバグ回避！） ★★★
+        function renderDish(dish) {
+            const output = document.getElementById('dish-output');
+            const mini = document.getElementById('miniSenku');
+
+            isReacting = true; 
+            
+            // ニヤリ顔にする
+            setMainImage('senku-main-niya.png');
+            
+            // コピー用テキスト作成
+            currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
+
+            // HTML生成
+            output.innerHTML = `
+                <div class="dish">
+                    <div class="name">${dish.name}</div>
+                    <div class="info">
+                        <span style="margin:0 10px;"><i class="fas fa-chart-line"></i> ${dish.difficulty}</span>
+                        <span style="margin:0 10px;"><i class="fas fa-clock"></i> 約${dish.time_min}分</span>
+                    </div>
+                    <div class="ingredients">
+                        <strong><i class="fas fa-carrot" style="color:var(--main);"></i> 材料</strong>
+                        <hr style="border:none;border-top:1px dashed #ccc;margin:5px 0 10px;">
+                        ${dish.ingredients.join("<br>")}
+                    </div>
+                    <div class="steps">
+                        <strong><i class="fas fa-fire" style="color:var(--accent);"></i> 手順</strong>
+                        <ol start="1">
+                            ${dish.steps.map(s => `<li>${s}</li>`).join('')}
+                        </ol>
+                    </div>
+                    <div class="comment">
+                            ${dish.senku_comment}
+                    </div>
+                    <div class="action-buttons">
+                        <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> レシピをコピー</div>
+                        <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有する</div>
+                    </div>
+                </div>
+            `;
+
+            // 3秒後に真顔に戻る
+            setTimeout(() => {
+                isReacting = false;
+                setMainImage('senku-main.png');
+            }, 3000);
+
+            // 表示エリアを出す
+            document.getElementById('result').style.display = 'block';
+            mini.style.display = 'block';
+            document.getElementById('result').scrollIntoView({behavior: "smooth"});
+        }
+
+        // ★★★ 検索ボタンを押した時の処理（あいまい検索OK） ★★★
         function showRandomDish() {
             const matched = [];
             if (!currentIngredients || currentIngredients.length === 0) return;
 
             for (const pair of data.pairs) {
                 const normalizedPair = pair.ingredients.map(normalize);
+                // 入力された食材が、レシピの食材にどれだけ含まれているかカウント
                 const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
-                // 1つでも足りない食材があれば許容する（検索の優しさ）
+                
+                // 1つでも足りない食材があっても許容する（検索の優しさ）
                 if (hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
             }
 
@@ -488,53 +538,34 @@
                         <div class="name" style="border:none;font-size:24px;">……浮かばないな。</div>
                         <p>……ちょっと厳しい組み合わせだな。<br>でも冷蔵庫もう一回見てみろよ。</p>
                     </div>`;
+                document.getElementById('result').style.display = 'block';
+                setTimeout(() => { isReacting = false; setMainImage('senku-main.png'); }, 3000);
             } else {
-                // レシピがある時：ニヤリ顔
-                setMainImage('senku-main-niya.png');
-                
+                // 見つかったら表示関数へ
                 const dish = matched[Math.floor(Math.random() * matched.length)];
-                currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
-
-                output.innerHTML = `
-                    <div class="dish">
-                        <div class="name">${dish.name}</div>
-                        <div class="info">
-                            <span style="margin:0 10px;"><i class="fas fa-chart-line"></i> ${dish.difficulty}</span>
-                            <span style="margin:0 10px;"><i class="fas fa-clock"></i> 約${dish.time_min}分</span>
-                        </div>
-                        <div class="ingredients">
-                            <strong><i class="fas fa-carrot" style="color:var(--main);"></i> 材料</strong>
-                            <hr style="border:none;border-top:1px dashed #ccc;margin:5px 0 10px;">
-                            ${dish.ingredients.join("<br>")}
-                        </div>
-                        <div class="steps">
-                            <strong><i class="fas fa-fire" style="color:var(--accent);"></i> 手順</strong>
-                            <ol start="1">
-                                ${dish.steps.map(s => `<li>${s}</li>`).join('')}
-                            </ol>
-                        </div>
-                        <div class="comment">
-                             ${dish.senku_comment}
-                        </div>
-                        <div class="action-buttons">
-                            <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> レシピをコピー</div>
-                            <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有する</div>
-                        </div>
-                    </div>
-                `;
+                renderDish(dish);
             }
-
-            // 3秒後に通常顔＆まばたき再開
-            setTimeout(() => {
-                isReacting = false;
-                setMainImage('senku-main.png');
-            }, 3000);
-
-            document.getElementById('result').style.display = 'block';
-            mini.style.display = 'block';
-            document.getElementById('result').scrollIntoView({behavior: "smooth"});
         }
 
+        // ★★★ 俺の気分（ランダム）ボタンの処理 ★★★
+        // ここを修正！検索を通さず、選んだペアから直接レシピを出す！
+        function randomMenu() {
+            // ペアをランダムに選ぶ
+            const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
+            
+            // 入力欄とタグの見た目を更新
+            document.getElementById('input').value = randomPair.ingredients.join(" ");
+            currentIngredients = randomPair.ingredients;
+            updateTags();
+
+            // ★ここがポイント：ペアの中から直接レシピを選ぶ（浮気しない！）
+            const dish = randomPair.recipes[Math.floor(Math.random() * randomPair.recipes.length)];
+            
+            // 表示関数へ
+            renderDish(dish);
+        }
+
+        // 入力やタグ関連の処理
         let currentIngredients = [];
         let currentDishText = "";
 
@@ -582,12 +613,6 @@
             navigator.clipboard.writeText(currentDishText).then(() => {
                 alert("共有できない環境だからコピーしたぞ");
             });
-        }
-
-        function randomMenu() {
-            const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
-            document.getElementById('input').value = randomPair.ingredients.join(" ");
-            search();
         }
 
         // data定義
