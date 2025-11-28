@@ -465,6 +465,7 @@
         startBlinking();
 
         // レシピ決定時の処理
+        // 通常検索（あいまい検索OK）
         function showRandomDish() {
             const matched = [];
             if (!currentIngredients || currentIngredients.length === 0) return;
@@ -472,19 +473,15 @@
             for (const pair of data.pairs) {
                 const normalizedPair = pair.ingredients.map(normalize);
                 const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
+                // 1つでも足りない食材があれば許容する（検索の優しさ）
                 if (hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
             }
 
-            const output = document.getElementById('dish-output');
-            const mini = document.getElementById('miniSenku');
-
-            // ★ここで表情を変える！
-            isReacting = true; // まばたき停止
-
             if (matched.length === 0) {
-                // レシピがない時：真面目顔
+                // 見つからない時の処理
+                isReacting = true;
                 setMainImage('senku-main-majime.png');
-                
+                const output = document.getElementById('dish-output');
                 output.innerHTML = `
                     <div class="dish" style="text-align:center;">
                         <i class="fas fa-exclamation-circle" style="font-size:40px;color:#bbb;margin-bottom:10px;"></i><br>
