@@ -459,15 +459,13 @@
 
         startBlinking();
 
-        // ★★★ 共通：レシピを画面に表示する関数（ここを分離してバグ回避！） ★★★
+        // ★★★ 共通：レシピを画面に表示する関数 ★★★
         function renderDish(dish) {
             const output = document.getElementById('dish-output');
             const mini = document.getElementById('miniSenku');
 
             isReacting = true; 
-            
-            // ニヤリ顔にする
-            setMainImage('senku-main-niya.png');
+            setMainImage('senku-main-niya.png'); // ニヤリ顔
             
             // コピー用テキスト作成
             currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
@@ -513,7 +511,7 @@
             document.getElementById('result').scrollIntoView({behavior: "smooth"});
         }
 
-        // ★★★ 検索ボタンを押した時の処理（あいまい検索OK） ★★★
+        // ★★★ 検索ロジック（ここを修正しました！） ★★★
         function showRandomDish() {
             const matched = [];
             if (!currentIngredients || currentIngredients.length === 0) return;
@@ -523,8 +521,10 @@
                 // 入力された食材が、レシピの食材にどれだけ含まれているかカウント
                 const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
                 
-                // 1つでも足りない食材があっても許容する（検索の優しさ）
-                if (hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
+                // 【修正点】hitCount > 0 を追加！これで「カスりもしないレシピ」は除外される！
+                if (hitCount > 0 && hitCount >= normalizedPair.length - 1) {
+                    matched.push(...pair.recipes);
+                }
             }
 
             if (matched.length === 0) {
@@ -536,7 +536,7 @@
                     <div class="dish" style="text-align:center;">
                         <i class="fas fa-exclamation-circle" style="font-size:40px;color:#bbb;margin-bottom:10px;"></i><br>
                         <div class="name" style="border:none;font-size:24px;">……浮かばないな。</div>
-                        <p>……ちょっと厳しい組み合わせだな。<br>でも冷蔵庫もう一回見てみろよ。</p>
+                        <p>……ちょっと厳しい組み合わせだな。<br>その食材はまだ俺のデータベースにないかもな。</p>
                     </div>`;
                 document.getElementById('result').style.display = 'block';
                 setTimeout(() => { isReacting = false; setMainImage('senku-main.png'); }, 3000);
@@ -548,9 +548,7 @@
         }
 
         // ★★★ 俺の気分（ランダム）ボタンの処理 ★★★
-        // ここを修正！検索を通さず、選んだペアから直接レシピを出す！
         function randomMenu() {
-            // ペアをランダムに選ぶ
             const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
             
             // 入力欄とタグの見た目を更新
@@ -558,10 +556,8 @@
             currentIngredients = randomPair.ingredients;
             updateTags();
 
-            // ★ここがポイント：ペアの中から直接レシピを選ぶ（浮気しない！）
+            // ペアの中から直接レシピを選ぶ
             const dish = randomPair.recipes[Math.floor(Math.random() * randomPair.recipes.length)];
-            
-            // 表示関数へ
             renderDish(dish);
         }
 
