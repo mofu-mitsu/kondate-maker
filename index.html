@@ -13,61 +13,63 @@
     <meta property="og:site_name" content="もふみつ工房">
     <link rel="icon" href="https://mofu-mitsu.github.io/favicon.ico" type="image/x-icon">
     <style>
-        :root{--main:#e67e22;--sub:#f39c12;--accent:#ff6b35;--bg:#fff8f0;--light:#fdfd96;}
-        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,#fff8f0,#ffe8d6);color:#333;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column;}
-        .header{text-align:center;padding:30px 20px;background:linear-gradient(135deg,#ff9d6c,#ff6b35);color:white;box-shadow:0 8px 20px rgba(0,0,0,0.2);}
-        .title-main{font-size:42px;font-weight:900;margin:10px 0;letter-spacing:3px;text-shadow:3px 3px 6px rgba(0,0,0,0.4);}
-        .title-sub{font-size:18px;margin:5px 0;opacity:0.9;}
-        .title-ruby{font-size:20px;color:#fff8c0;margin-bottom:10px;}
-        .senku-main{width:300px;height:400px;max-width:90%;margin:20px auto;background:var(--main);border-radius:20px;
+        :root{--main:#e67e22;--sub:#f39c12;--accent:#ff6b35;--bg:#fff8f0;--light:#fdfd96;--gold:#d4a017;--brown:#8b4513;}
+        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,var(--bg),#ffe8d6);color:#333;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column;}
+        .header{text-align:center;padding:50px 20px;background:linear-gradient(135deg,#ffdab9,#ff8c00);color:var(--brown);box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;border-bottom:8px solid var(--gold);}
+        .header::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px);opacity:0.5;}
+        .title-ruby{font-size:24px;color:var(--main);margin-bottom:5px;font-weight:bold;letter-spacing:2px;}
+        .title-main{font-size:48px;font-weight:900;margin:0;letter-spacing:5px;text-shadow:4px 4px 10px rgba(0,0,0,0.4);color:var(--main);background:linear-gradient(to right,var(--gold),var(--main));-webkit-background-clip:text;color:transparent;}
+        .title-sub{font-size:20px;margin-top:10px;color:var(--brown);opacity:0.9;font-style:italic;}
+        .senku-main{width:320px;height:427px;max-width:90%;margin:30px auto;background:var(--main);border-radius:30px;border:6px solid var(--gold);
             background-image:url('senku-main.png');background-size:cover;background-position:center;
-            box-shadow:0 15px 30px rgba(0,0,0,0.3);}
-        .senku-main.fallback{background:#e67e22 url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800"><rect width="600" height="800" fill="%23e67e22"/><text x="300" y="380" text-anchor="middle" fill="white" font-size="60">先駆</text><text x="300" y="460" text-anchor="middle" fill="white" font-size="40">シェフ</text></svg>') center/cover;}
-        .container{max-width:800px;margin:0 auto;background:white;padding:30px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.1);flex:1;position:relative;}
-        input{padding:18px;width:100%;border:3px solid #eee;border-radius:16px;font-size:18px;box-sizing:border-box;margin:15px 0;box-shadow:inset 0 3px 6px rgba(0,0,0,0.1);}
-        button{background:var(--main);color:white;border:none;padding:16px 32px;border-radius:16px;cursor:pointer;font-weight:bold;font-size:18px;margin:8px;}
-        button:hover{background:#d35400;}
+            box-shadow:0 25px 50px rgba(0,0,0,0.4);transition:transform 0.3s,background-image 0.3s;}
+        .senku-main:hover{transform:scale(1.03);}
+        .container{max-width:800px;margin:0 auto;background:white;padding:40px;border-radius:30px;box-shadow:0 15px 40px rgba(0,0,0,0.2);flex:1;position:relative;border:4px solid var(--gold);}
+        input{padding:20px;width:100%;border:4px solid #eee;border-radius:20px;font-size:19px;box-sizing:border-box;margin:20px 0;box-shadow:inset 0 4px 8px rgba(0,0,0,0.1);background:#fffaf0;}
+        button{background:var(--main);color:white;border:none;padding:18px 40px;border-radius:20px;cursor:pointer;font-weight:bold;font-size:19px;margin:10px;box-shadow:0 6px 12px rgba(0,0,0,0.2);}
+        button:hover{background:#d35400;transform:translateY(-2px);}
         .random-btn{background:#95a5a6;}
         .random-btn:hover{background:#7f8c8d;}
-        .tags{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0;justify-content:center;}
-        .tag{background:var(--sub);color:white;padding:10px 20px;border-radius:50px;font-size:15px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
-        .result{margin-top:40px;padding:30px;background:var(--light);border-radius:20px;display:none;position:relative;}
-        .senku-mini{position:absolute;bottom:-60px;right:20px;width:150px;height:150px;background:var(--main);border-radius:50%;background-image:url('senku-mini.png');background-size:cover;z-index:10;box-shadow:0 10px 20px rgba(0,0,0,0.3);}
-        .senku-mini::after{content:"にやって";font-size:14px;background:rgba(0,0,0,0.6);color:white;padding:8px 15px;border-radius:20px;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);white-space:nowrap;}
-        .dish{background:white;padding:25px;margin:20px 0;border-radius:16px;border-left:8px solid var(--accent);box-shadow:0 6px 15px rgba(0,0,0,0.15);}
-        .name{font-size:28px;font-weight:900;color:var(--accent);margin-bottom:10px;text-align:center;}
-        .info{font-size:16px;color:#777;text-align:center;margin:10px 0;}
-        .ingredients{background:#f8f8f8;padding:18px;border-radius:12px;font-size:16px;margin:15px 0;}
-        .steps{line-height:2.2;margin:25px 0;font-size:16px;}
-        .comment{font-style:italic;color:#555;background:#f0f0f0;padding:20px;border-radius:16px;font-size:17px;margin:25px 0;border-left:6px solid var(--main);}
-        .action-buttons{display:flex;gap:20px;justify-content:center;margin:30px 0;flex-wrap:wrap;}
-        .copy-btn,.share-btn{background:#3498db;color:white;padding:16px 32px;border-radius:50px;font-size:22px;cursor:pointer;box-shadow:0 6px 12px rgba(0,0,0,0.2);}
+        .tags{display:flex;flex-wrap:wrap;gap:15px;margin:25px 0;justify-content:center;}
+        .tag{background:var(--sub);color:white;padding:12px 25px;border-radius:50px;font-size:16px;box-shadow:0 5px 10px rgba(0,0,0,0.2);}
+        .result{margin-top:50px;padding:40px;background:var(--light);border-radius:30px;display:none;position:relative;border:4px dashed var(--gold);}
+        .senku-mini{position:absolute;bottom:-80px;right:20px;width:170px;height:170px;background:var(--main);border-radius:50%;background-image:url('senku-mini.png');background-size:cover;z-index:10;box-shadow:0 15px 30px rgba(0,0,0,0.4);border:5px solid var(--gold);}
+        .senku-mini::after{content:"にやって";font-size:16px;background:rgba(0,0,0,0.7);color:white;padding:12px 22px;border-radius:30px;position:absolute;bottom:15px;left:50%;transform:translateX(-50%);white-space:nowrap;box-shadow:0 4px 8px rgba(0,0,0,0.3);}
+        .dish{background:white;padding:30px;margin:25px 0;border-radius:20px;border-left:10px solid var(--accent);box-shadow:0 8px 20px rgba(0,0,0,0.2);border-top:3px solid var(--gold);border-bottom:3px solid var(--gold);}
+        .name{font-size:30px;font-weight:900;color:var(--accent);text-align:center;margin-bottom:15px;text-shadow:2px 2px 5px rgba(0,0,0,0.3);}
+        .info{font-size:17px;color:#777;text-align:center;margin:12px 0;}
+        .ingredients{background:#f8f8f8;padding:20px;border-radius:15px;font-size:17px;margin:20px 0;border:2px dotted var(--main);}
+        .steps{line-height:2.3;margin:30px 0;font-size:17px;}
+        .comment{font-style:italic;color:#555;background:#f0f0f0;padding:25px;border-radius:20px;font-size:18px;margin:30px 0;border-left:8px solid var(--main);box-shadow:0 5px 10px rgba(0,0,0,0.1);}
+        .action-buttons{display:flex;gap:25px;justify-content:center;margin:35px 0;flex-wrap:wrap;}
+        .copy-btn,.share-btn{background:#3498db;color:white;padding:18px 40px;border-radius:50px;font-size:24px;cursor:pointer;box-shadow:0 8px 15px rgba(0,0,0,0.3);}
         .share-btn{background:#2ecc71;}
-        .copy-btn:hover{background:#2980b9;}
-        .share-btn:hover{background:#27ae60;}
-        footer{text-align:center;padding:50px 20px;background:#fff8f0;}
-        .back-top{background:var(--main);color:white;padding:16px 40px;border-radius:50px;font-size:20px;text-decoration:none;display:inline-block;margin:20px;box-shadow:0 8px 16px rgba(0,0,0,0.2);}
-        .back-top:hover{background:#d35400;}
-        .rakuten-banner{margin:30px 0;}
+        .copy-btn:hover{background:#2980b9;transform:translateY(-3px);}
+        .share-btn:hover{background:#27ae60;transform:translateY(-3px);}
+        footer{text-align:center;padding:70px 20px;background:#fff8f0;border-top:5px solid var(--gold);}
+        .back-top{background:var(--main);color:white;padding:20px 60px;border-radius:50px;font-size:22px;text-decoration:none;display:inline-block;margin:25px;box-shadow:0 12px 25px rgba(0,0,0,0.3);}
+        .back-top:hover{background:#d35400;transform:translateY(-3px);}
+        .rakuten-banner{margin:40px 0;padding:20px;background:#fffaf0;border:3px solid var(--gold);border-radius:20px;}
         @media(max-width:600px){
-            .title-main{font-size:32px;}
-            .senku-main{width:250px;height:333px;}
-            .senku-mini{width:120px;height:120px;bottom:-50px;right:10px;}
-            .name{font-size:24px;}
+            .title-main{font-size:36px;}
+            .senku-main{width:260px;height:347px;}
+            .senku-mini{width:130px;height:130px;bottom:-60px;right:10px;}
+            .name{font-size:26px;}
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="title-ruby">せんく シェフ → <strong>先駆シェフ</strong></div>
+        <div class="title-ruby">せんく</div>
         <div class="title-main">先駆シェフの献立メーカー</div>
         <div class="title-sub">～冷蔵庫にあるもので即決～</div>
-        <div class="senku-main ${'senku-main.png'?'':'fallback'}"></div>
+        <div class="senku-main" id="senkuMain"></div>
     </div>
+
     <div class="container">
-        <p style="text-align:center;color:#777;margin-bottom:20px;">冷蔵庫にある食材をスペースで区切って入れてくれ</p>
+        <p style="text-align:center;color:#777;font-size:19px;margin:30px 0;">冷蔵庫にある食材をスペースで区切って入れてくれ</p>
         <input type="text" id="input" placeholder="例：鶏もも肉 玉ねぎ 卵" autofocus>
-        <div style="text-align:center;margin:20px 0;">
+        <div style="text-align:center;margin:35px 0;">
             <button onclick="search()">献立を決める</button>
             <button class="random-btn" onclick="randomMenu()">今日の俺の気分</button>
         </div>
@@ -75,9 +77,11 @@
 
         <div class="result" id="result">
             <div id="dish-output"></div>
-            <button onclick="search()" style="margin-top:20px;background:#7f8c8d;">別の案をくれ</button>
+            <div class="senku-mini" id="miniSenku" style="display:none;"></div>
+            <button onclick="search()" style="margin-top:40px;background:#7f8c8d;padding:18px 40px;border-radius:20px;font-size:18px;">別の案をくれ</button>
         </div>
     </div>
+
     <footer>
         <div class="rakuten-banner">
             <a href="https://hb.afl.rakuten.co.jp/hsc/4e9240a2.33577567.3d95c766.8a7897b5/?link_type=pict&ut=eyJwYWdlIjoic2hvcCIsInR5cGUiOiJwaWN0IiwiY29sIjoxLCJjYXQiOiI4NSIsImJhbiI6NDc4OTczLCJhbXAiOmZhbHNlfQ%3D%3D" target="_blank" rel="nofollow sponsored noopener">
@@ -86,46 +90,125 @@
         </div>
         <a href="https://mofu-mitsu.github.io/" class="back-top">もふみつ工房 TOPへ戻る</a>
     </footer>
+
     <script>
-        // まばたきアニメ（メイン＋ミニ）
+        // まばたきアニメ（メインのみ）
         function blink() {
             const main = document.getElementById('senkuMain');
-            const mini = document.getElementById('miniSenku');
-            if(main) main.style.backgroundImage = "url('senku-main-blink.png')";
-            if(mini && mini.style.display !== 'none') mini.style.backgroundImage = "url('senku-mini-blink.png')";
-            setTimeout(() => {
-                if(main) main.style.backgroundImage = "url('senku-main.png')";
-                if(mini && mini.style.display !== 'none') mini.style.backgroundImage = "url('senku-mini.png')";
-            }, 150);
+            if (main) {
+                main.style.backgroundImage = "url('senku-main-blink.png')";
+                setTimeout(() => {
+                    main.style.backgroundImage = "url('senku-main.png')";
+                }, 150);
+            }
         }
-        setInterval(blink, 4000);
-        setTimeout(blink, 2000); // 最初少し早く
+        setInterval(blink, 4500);
+        setTimeout(blink, 1800);
 
         // レシピ決定時の表情変化
-        const originalShowRandomDish = showRandomDish;
-        showRandomDish = function() {
-            originalShowRandomDish();
+        function showRandomDish() {
+            const matched = [];
+            for (const pair of data.pairs) {
+                const normalizedPair = pair.ingredients.map(normalize);
+                const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
+                if (hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
+            }
+
+            const output = document.getElementById('dish-output');
             const main = document.getElementById('senkuMain');
             const mini = document.getElementById('miniSenku');
-            
-            // マッチしなかったとき
-            if(document.querySelector('.dish') && document.querySelector('.dish').textContent.includes('厳しい組み合わせ')) {
-                main.style.backgroundImage = "url('senku-main-majime.png')";
-            } else {
-                main.style.backgroundImage = "url('senku-main-niya.png')";
-            }
-            
-            mini.style.display = 'block';
-            setTimeout(() => {
-                main.style.backgroundImage = "url('senku-main.png')";
-            }, 3000);
-        };
-        const normalize = text => text.replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
-                                     .replace(/鶏肉|鶏もも|鶏もも肉/gi, "鶏もも肉")
-                                     .replace(/豚肉|豚バラ|豚こま/gi, "豚肉")
-                                     .replace(/ほうれん草|ホウレン草/gi, "ほうれん草")
-                                     .replace(/さば|鯖/gi, "さば");
 
+            if (matched.length === 0) {
+                output.innerHTML = '<div class="dish">……ちょっと厳しい組み合わせだな。でも冷蔵庫もう一回見てみろよ。</div>';
+                if (main) main.style.backgroundImage = "url('senku-main-majime.png')";
+                setTimeout(() => {
+                    if (main) main.style.backgroundImage = "url('senku-main.png')";
+                }, 3000);
+            } else {
+                const dish = matched[Math.floor(Math.random() * matched.length)];
+                currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
+
+                output.innerHTML = `
+                    <div class="dish">
+                        <div class="name">${dish.name}</div>
+                        <div class="info">${dish.difficulty}　約${dish.time_min}分</div>
+                        <div class="ingredients"><strong>材料：</strong>${dish.ingredients.join("　／　")}</div>
+                        <div class="steps"><strong>手順</strong><br><ol start="1">
+                            ${dish.steps.map(s => `<li>${s}</li>`).join('')}
+                        </ol></div>
+                        <div class="comment">「${dish.senku_comment}」</div>
+                        <div class="action-buttons">
+                            <div class="copy-btn" onclick="copyOnly()">📋 コピー</div>
+                            <div class="share-btn" onclick="shareRecipe()">🔗 共有</div>
+                        </div>
+                    </div>
+                `;
+                if (main) main.style.backgroundImage = "url('senku-main-niya.png')";
+                setTimeout(() => {
+                    if (main) main.style.backgroundImage = "url('senku-main.png')";
+                }, 3000);
+            }
+            document.getElementById('result').style.display = 'block';
+            mini.style.display = 'block';
+        }
+
+        // 他のスクリプト全部（完全版）
+        let currentIngredients = [];
+        let currentDishText = "";
+
+        document.getElementById('input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') search();
+        });
+
+        function search() {
+            const raw = document.getElementById('input').value.trim();
+            if (!raw) return;
+            currentIngredients = raw.split(/\s+/).map(normalize);
+            updateTags();
+            showRandomDish();
+        }
+
+        function updateTags() {
+            const tagsDiv = document.getElementById('tags');
+            tagsDiv.innerHTML = '';
+            currentIngredients.forEach(t => {
+                const tag = document.createElement('span');
+                tag.className = 'tag';
+                tag.textContent = t;
+                tagsDiv.appendChild(tag);
+            });
+        }
+
+        function copyOnly() {
+            navigator.clipboard.writeText(currentDishText).then(() => {
+                alert("レシピをコピーしたぞ");
+            });
+        }
+
+        function shareRecipe() {
+            if (navigator.share) {
+                navigator.share({
+                    title: "先駆シェフの献立",
+                    text: currentDishText
+                }).catch(() => fallbackCopy());
+            } else {
+                fallbackCopy();
+            }
+        }
+
+        function fallbackCopy() {
+            navigator.clipboard.writeText(currentDishText).then(() => {
+                alert("共有できない環境だからコピーしたぞ");
+            });
+        }
+
+        function randomMenu() {
+            const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
+            document.getElementById('input').value = randomPair.ingredients.join(" ");
+            search();
+        }
+
+        // dataの全レシピ（前回のもの全部）
         const data = { "pairs": [
             {"ingredients":["鶏もも肉","玉ねぎ"],"recipes":[
                 {"name":"親子丼（簡単）","ingredients":["鶏もも肉 200g","玉ねぎ 1/2個","卵 2個","めんつゆ（3倍希釈）150ml","水 100ml"],"time_min":15,"difficulty":"★☆☆","steps":["玉ねぎ薄切りで強火1分炒める","鶏肉一口大入れて一緒に炒める","めんつゆ＋水で煮立て中火5分","溶き卵2回に分けて流し入れ30秒で完成"],"senku_comment":"玉ねぎの甘さは最初に炒めることで出る。失敗しようがない。" },
@@ -150,100 +233,6 @@
                 {"name":"鮭とほうれん草のクリーム煮","ingredients":["鮭切り身 2切れ","ほうれん草 1/2束","牛乳 200ml","バター 10g","小麦粉 大さじ1","コンソメ 小さじ1","塩胡椒 適量"],"time_min":20,"difficulty":"★★☆","steps":["鮭に塩して両面焼く","ほうれん草は茹でて水気切る","バターで小麦粉炒めて牛乳で伸ばす","コンソメで味調整して具材投入"],"senku_comment":"味はコンソメで決まる。パンでもご飯でも絶対いける。" }
             ]}
         ]};
-
-        let currentIngredients = [];
-        let currentDishText = "";
-
-        document.getElementById('input').addEventListener('keypress', e => { if(e.key==='Enter') search(); });
-
-        function search() {
-            const raw = document.getElementById('input').value.trim();
-            if(!raw) return;
-            currentIngredients = raw.split(/\s+/).map(normalize);
-            updateTags();
-            showRandomDish();
-        }
-
-        function updateTags() {
-            const tagsDiv = document.getElementById('tags');
-            tagsDiv.innerHTML = '';
-            currentIngredients.forEach(t => {
-                const tag = document.createElement('span');
-                tag.className = 'tag';
-                tag.textContent = t;
-                tagsDiv.appendChild(tag);
-            });
-        }
-
-        function showRandomDish() {
-            const matched = [];
-            for(const pair of data.pairs) {
-                const normalizedPair = pair.ingredients.map(normalize);
-                const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
-                if(hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
-            }
-
-            if(matched.length === 0) {
-                document.getElementById('dish-output').innerHTML = '<div class="dish">……ちょっと厳しい組み合わせだな。でも冷蔵庫もう一回見てみろよ。</div>';
-                return;
-            }
-
-            const dish = matched[Math.floor(Math.random() * matched.length)];
-            currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
-
-            document.getElementById('dish-output').innerHTML = `
-                <div class="dish">
-                    <div class="name">${dish.name}</div>
-                    <div class="info">${dish.difficulty}　約${dish.time_min}分</div>
-                    <div class="ingredients"><strong>材料：</strong>${dish.ingredients.join("　／　")}</div>
-                    <div class="steps"><strong>手順</strong><br><ol start="1">
-                        ${dish.steps.map(s => `<li>${s}</li>`).join('')}
-                    </ol></div>
-                    <div class="comment">「${dish.senku_comment}」</div>
-                    <div class="action-buttons">
-                        <div class="copy-btn" onclick="copyOnly()">📋 コピー</div>
-                        <div class="share-btn" onclick="shareRecipe()">🔗 共有</div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('result').style.display = 'block';
-        }
-
-        function copyOnly() {
-            navigator.clipboard.writeText(currentDishText).then(() => {
-                alert("レシピをコピーしたぞ");
-            });
-        }
-
-        function shareRecipe() {
-            if(navigator.share) {
-                navigator.share({
-                    title: "せんくシェフの献立",
-                    text: currentDishText
-                }).catch(() => {
-                    fallbackCopy();
-                });
-            } else {
-                fallbackCopy();
-            }
-        }
-
-        function fallbackCopy() {
-            navigator.clipboard.writeText(currentDishText).then(() => {
-                alert("共有できない環境だからコピーしたぞ");
-            });
-        }
-
-        function randomMenu() {
-            const randomPair = data.pairs[Math.floor(Math.random()*data.pairs.length)];
-            document.getElementById('input').value = randomPair.ingredients.join(" ");
-            search();
-        }
-        const originalShowRandomDish = showRandomDish;
-        showRandomDish = function() {
-            originalShowRandomDish();
-            document.getElementById('mini-senku').style.display = 'block';
-        };
     </script>
 </body>
 </html>
