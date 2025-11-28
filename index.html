@@ -420,15 +420,19 @@
 
     <script>
         // 置き換えスクリプト追加
-        const normalize = text => text.replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
-                                     .replace(/鶏肉|鶏もも|鶏もも肉/gi, "鶏もも肉")
-                                     .replace(/豚肉|豚バラ|豚こま/gi, "豚肉")
-                                     .replace(/ほうれん草|ホウレン草/gi, "ほうれん草")
-                                     .replace(/サケ|さけ/gi, "鮭")
-                                     .replace(/さば|鯖/gi, "さば")
-                                     .trim();
-        const normalize = (str) => str.trim();
-
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        // 1つのnormalize関数に全部統合！！！これで絶対動く！！
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        const normalize = (str) => {
+            return str
+                .replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
+                .replace(/鶏肉|鶏もも|鶏もも肉/gi, "鶏もも肉")
+                .replace(/豚肉|豚バラ|豚こま/gi, "豚肉")
+                .replace(/ほうれん草|ホウレン草/gi, "ほうれん草")
+                .replace(/サケ|さけ|鮭/gi, "鮭")
+                .replace(/さば|鯖/gi, "さば")
+                .trim();
+        };
         // ★表情管理ロジックを強化
         let blinkInterval;
         let isReacting = false; // リアクション中かどうかのフラグ
