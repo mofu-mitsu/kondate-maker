@@ -5,21 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>先駆シェフの献立メーカー｜もふみつ工房</title>
     <meta name="description" content="冷蔵庫の余ってる食材を入れるだけ！料理狂い先駆シェフが淡々と最高の献立を提案してくれる実用ツール">
-    <meta property="og:title" content="先駆シェフの献立メーカー｜もふみつ工房">
-    <meta property="og:description" content="冷蔵庫の余ってる食材を入れるだけ！先駆シェフが淡々と最高の献立を提案してくれるよ">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://mofu-mitsu.github.io/kondate-maker/">
-    <meta property="og:image" content="https://mofu-mitsu.github.io/kondate-maker/OGP.PNG">
-    <meta property="og:site_name" content="もふみつ工房">
-    <link rel="icon" href="https://mofu-mitsu.github.io/favicon.ico" type="image/x-icon">
     <style>
         :root{--main:#e67e22;--sub:#f39c12;--accent:#ff6b35;--bg:#fff8f0;--light:#fdfd96;--gold:#d4a017;--brown:#8b4513;}
         body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,var(--bg),#ffe8d6);color:#333;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column;}
+        
+        /* ヘッダー周りを修正 */
         .header{text-align:center;padding:50px 20px;background:linear-gradient(135deg,#ffdab9,#ff8c00);color:var(--brown);box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;border-bottom:8px solid var(--gold);}
         .header::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px);opacity:0.5;}
-        .title-ruby{font-size:24px;color:var(--main);margin-bottom:5px;font-weight:bold;letter-spacing:2px;}
-        .title-main{font-size:48px;font-weight:900;margin:0;letter-spacing:5px;text-shadow:4px 4px 10px rgba(0,0,0,0.4);color:var(--main);background:linear-gradient(to right,var(--gold),var(--main));-webkit-background-clip:text;color:transparent;}
-        .title-sub{font-size:20px;margin-top:10px;color:var(--brown);opacity:0.9;font-style:italic;}
+        
+        /* タイトルデザイン修正：読みやすく、ルビを統合 */
+        .title-main{
+            font-size:48px;
+            font-weight:900;
+            margin:0;
+            letter-spacing:5px;
+            text-shadow:3px 3px 0px #fff, 6px 6px 15px rgba(0,0,0,0.3); /* 白縁取りで可読性UP */
+            color:var(--main);
+            /* グラデーションは見づらい原因になりやすいので、濃いオレンジ単色で見やすくしたよ */
+        }
+        /* ルビ（ふりがな）の設定 */
+        ruby { font-family: inherit; }
+        rt { 
+            color: var(--main); /* タイトルと同じ色 */
+            font-size: 16px; 
+            font-weight: bold;
+            text-shadow: none;
+            letter-spacing: 2px;
+            transform: translateY(-5px); /* ちょっと上に調整 */
+        }
+
+        .title-sub{font-size:20px;margin-top:15px;color:var(--brown);opacity:0.9;font-weight:bold;}
+        
         .senku-main{width:320px;height:427px;max-width:90%;margin:30px auto;background:var(--main);border-radius:30px;border:6px solid var(--gold);
             background-image:url('senku-main.png');background-size:cover;background-position:center;
             box-shadow:0 25px 50px rgba(0,0,0,0.4);transition:transform 0.3s,background-image 0.3s;}
@@ -60,8 +76,10 @@
 </head>
 <body>
     <div class="header">
-        <div class="title-ruby">せんく</div>
-        <div class="title-main">先駆シェフの献立メーカー</div>
+        <!-- ここ修正！rubyタグを使って綺麗に配置 -->
+        <h1 class="title-main">
+            <ruby>先駆<rt>せんく</rt></ruby>シェフの献立メーカー
+        </h1>
         <div class="title-sub">～冷蔵庫にあるもので即決～</div>
         <div class="senku-main" id="senkuMain"></div>
     </div>
@@ -92,10 +110,14 @@
     </footer>
 
     <script>
+        // ★修正点1：足りなかった normalize 関数を追加！
+        const normalize = (str) => str.trim();
+
         // まばたきアニメ（メインのみ）
         function blink() {
             const main = document.getElementById('senkuMain');
             if (main) {
+                // 画像ファイル名が正しいか確認してね
                 main.style.backgroundImage = "url('senku-main-blink.png')";
                 setTimeout(() => {
                     main.style.backgroundImage = "url('senku-main.png')";
@@ -108,9 +130,17 @@
         // レシピ決定時の表情変化
         function showRandomDish() {
             const matched = [];
+            // ★修正点2：変数が正しく定義されているかチェック
+            if (!currentIngredients || currentIngredients.length === 0) {
+                return;
+            }
+
             for (const pair of data.pairs) {
+                // ここで normalize がなくてエラーになってたんだよ！
                 const normalizedPair = pair.ingredients.map(normalize);
                 const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
+                
+                // 完全一致じゃなくても、食材がペアの数-1個以上あれば提案するように調整
                 if (hitCount >= normalizedPair.length - 1) matched.push(...pair.recipes);
             }
 
@@ -150,9 +180,11 @@
             }
             document.getElementById('result').style.display = 'block';
             mini.style.display = 'block';
+            
+            // 結果が出たらそこまでスクロールしてあげると親切かも
+            document.getElementById('result').scrollIntoView({behavior: "smooth"});
         }
 
-        // 他のスクリプト全部（完全版）
         let currentIngredients = [];
         let currentDishText = "";
 
@@ -163,6 +195,7 @@
         function search() {
             const raw = document.getElementById('input').value.trim();
             if (!raw) return;
+            // スペース区切りを配列にする
             currentIngredients = raw.split(/\s+/).map(normalize);
             updateTags();
             showRandomDish();
@@ -203,12 +236,15 @@
         }
 
         function randomMenu() {
+            // ランダムにペアを選んで
             const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
+            // 入力欄に入れて
             document.getElementById('input').value = randomPair.ingredients.join(" ");
+            // 検索実行！
             search();
         }
 
-        // dataの全レシピ（前回のもの全部）
+        // data定義
         const data = { "pairs": [
             {"ingredients":["鶏もも肉","玉ねぎ"],"recipes":[
                 {"name":"親子丼（簡単）","ingredients":["鶏もも肉 200g","玉ねぎ 1/2個","卵 2個","めんつゆ（3倍希釈）150ml","水 100ml"],"time_min":15,"difficulty":"★☆☆","steps":["玉ねぎ薄切りで強火1分炒める","鶏肉一口大入れて一緒に炒める","めんつゆ＋水で煮立て中火5分","溶き卵2回に分けて流し入れ30秒で完成"],"senku_comment":"玉ねぎの甘さは最初に炒めることで出る。失敗しようがない。" },
