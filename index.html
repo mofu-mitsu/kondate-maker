@@ -76,14 +76,24 @@
             margin-bottom: 20px;
         }
 
-        /* タイトルを2段組に */
+        /* タイトル設定 */
         .title-upper {
             font-size: 28px;
             color: var(--gold);
             font-weight: 700;
             letter-spacing: 2px;
-            margin-bottom: -10px;
+            margin-bottom: -5px; /* ルビの分少し調整 */
             display: block;
+            line-height: 1.5; /* ルビが重ならないように */
+        }
+        /* ルビ（ふりがな）のデザイン */
+        ruby { font-family: inherit; }
+        rt { 
+            color: var(--main); /* 読み方はオレンジでアクセント */
+            font-size: 12px; 
+            font-weight: bold;
+            transform: translateY(-2px);
+            letter-spacing: 0;
         }
         .title-lower {
             font-size: 56px;
@@ -365,8 +375,10 @@
 <body>
     <div class="header">
         <div class="title-box">
-            <!-- タイトルを2段に変更 -->
-            <span class="title-upper">酢原先駆シェフの</span>
+            <!-- ★ここにルビを追加しました！ -->
+            <span class="title-upper">
+                <ruby>先駆<rt>せんく</rt></ruby>シェフの
+            </span>
             <span class="title-lower">献立メーカー</span>
             <div class="title-sub"><i class="fas fa-utensils"></i> 冷蔵庫にあるもので即決 <i class="fas fa-utensils"></i></div>
         </div>
@@ -375,7 +387,7 @@
 
     <div class="container">
         <div class="input-label">
-            <i class="fas fa-carrot" style="color:var(--main);"></i> 食材を入れてください
+            <i class="fas fa-carrot" style="color:var(--main);"></i> 冷蔵庫にある食材をスペースで区切って入れてくれ
         </div>
         <p style="text-align:center;color:#888;font-size:14px;margin-bottom:15px;font-family:sans-serif;">（スペース区切りで複数可）</p>
         
