@@ -5,181 +5,394 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>先駆シェフの献立メーカー｜もふみつ工房</title>
     <meta name="description" content="冷蔵庫の余ってる食材を入れるだけ！料理狂い先駆シェフが淡々と最高の献立を提案してくれる実用ツール">
-    
-    <!-- ★ここ追加！FontAwesome（アイコン）をCDNで読み込み -->
+    <meta property="og:title" content="先駆シェフの献立メーカー｜もふみつ工房">
+    <meta property="og:description" content="冷蔵庫の余ってる食材を入れるだけ！先駆シェフが淡々と最高の献立を提案してくれるよ">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mofu-mitsu.github.io/kondate-maker/">
+    <meta property="og:image" content="https://mofu-mitsu.github.io/kondate-maker/OGP.PNG">
+    <meta property="og:site_name" content="もふみつ工房">
+    <link rel="icon" href="https://mofu-mitsu.github.io/favicon.ico" type="image/x-icon">
+    <!-- FontAwesome（アイコン） -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ★Google Fonts（高級感のある明朝体）を追加 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root{--main:#e67e22;--sub:#f39c12;--accent:#ff6b35;--bg:#fff8f0;--light:#fdfd96;--gold:#d4a017;--brown:#8b4513;}
+        :root{
+            --main: #d35400;      /* 濃いオレンジ（焼き色） */
+            --gold: #b8860b;      /* 落ち着いたゴールド */
+            --gold-light: #f1c40f;/* 明るいゴールド */
+            --brown: #5d4037;     /* コーヒーブラウン */
+            --bg: #fffbf5;        /* 高級紙のようなクリーム色 */
+            --accent: #e74c3c;    /* 赤みアクセント */
+        }
         
-        /* 全体のボックスサイズ計算を統一して崩れにくくする */
         *, *::before, *::after { box-sizing: border-box; }
 
-        body{font-family:'Segoe UI',sans-serif;background:linear-gradient(to bottom,var(--bg),#ffe8d6);color:#333;margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column;}
+        body{
+            font-family: 'Zen Old Mincho', serif; /* フォントを明朝体に変更 */
+            background-color: var(--bg);
+            /* 背景にうっすらとひし形のパターンを入れて高級感を出す */
+            background-image: linear-gradient(135deg, #fff0db 25%, transparent 25%), linear-gradient(225deg, #fff0db 25%, transparent 25%), linear-gradient(45deg, #fff0db 25%, transparent 25%), linear-gradient(315deg, #fff0db 25%, transparent 25%);
+            background-position: 20px 0, 20px 0, 0 0, 0 0;
+            background-size: 40px 40px;
+            background-repeat: repeat;
+            color: var(--brown);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
         
-        /* ヘッダーデザイン */
-        .header{text-align:center;padding:40px 15px;background:linear-gradient(135deg,#ffdab9,#ff8c00);color:var(--brown);box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;border-bottom:8px solid var(--gold);}
-        .header::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 10px, transparent 10px, transparent 20px);opacity:0.5;}
-        
-        /* ★タイトル枠と装飾（豪華版） */
-        .title-box {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.9);
-            border: 5px double var(--main); /* 二重線で豪華に */
-            border-radius: 15px;
-            padding: 20px 40px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        /* ヘッダーデザイン：OGPに寄せて白ベース×ゴールド枠 */
+        .header{
+            text-align: center;
+            padding: 40px 15px 20px;
+            background: white;
+            border-bottom: 5px solid var(--gold);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
             position: relative;
+            overflow: hidden;
+        }
+        /* 四隅の装飾イメージ（CSSで表現） */
+        .header::before, .header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--gold) 0%, transparent 50%);
+            z-index: 0;
+        }
+        .header::before { left: 0; }
+        .header::after { right: 0; transform: rotate(90deg); }
+
+        .title-box {
+            position: relative;
+            z-index: 1;
             margin-bottom: 20px;
         }
-        /* ナイフとフォークのアイコン色 */
-        .fa-utensils { color: var(--gold); margin: 0 15px; filter: drop-shadow(1px 1px 0 var(--brown)); }
 
-        .title-main{
-            font-size:42px; /* スマホ考慮して少し調整 */
-            font-weight:900;
-            margin:0;
-            letter-spacing:3px;
-            text-shadow:2px 2px 0px #fff, 4px 4px 10px rgba(0,0,0,0.2);
-            color:var(--main);
-            display: inline-block;
+        /* タイトルを2段組に */
+        .title-upper {
+            font-size: 28px;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: -10px;
+            display: block;
         }
-        ruby { font-family: inherit; }
-        rt { color: var(--main); font-size: 14px; font-weight: bold; transform: translateY(-3px); }
+        .title-lower {
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--brown);
+            letter-spacing: 5px;
+            text-shadow: 2px 2px 0px var(--gold-light);
+            display: block;
+            margin: 5px 0;
+        }
 
-        .title-sub{font-size:18px;margin-top:10px;color:var(--brown);opacity:1;font-weight:bold;display:block;}
+        .title-sub {
+            font-size: 16px;
+            color: var(--main);
+            font-weight: bold;
+            background: rgba(255,230,200,0.5);
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 50px;
+            margin-top: 10px;
+        }
         
-        .senku-main{width:300px;height:400px;max-width:80%;margin:20px auto;background:var(--main);border-radius:30px;border:6px solid var(--gold);
-            background-image:url('senku-main.png');background-size:cover;background-position:center;
-            box-shadow:0 25px 50px rgba(0,0,0,0.4);transition:transform 0.3s,background-image 0.3s;}
-        .senku-main:hover{transform:scale(1.03);}
+        /* メイン先駆シェフ画像 */
+        .senku-main {
+            width: 320px;
+            height: 427px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: var(--bg);
+            border-radius: 20px;
+            border: 8px double var(--gold); /* 額縁のような枠 */
+            background-image: url('senku-main.png');
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transition: transform 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+        .senku-main:hover { transform: scale(1.02); }
         
         /* コンテナ（メインエリア） */
-        .container{
-            width: 95%; /* 幅を画面いっぱいになりすぎないように */
-            max-width:800px;
-            margin: -30px auto 40px; /* ヘッダーに少しかぶせる */
-            background:white;
-            padding: 30px; /* PCでのパディング */
-            border-radius:30px;
-            box-shadow:0 15px 40px rgba(0,0,0,0.2);
-            flex:1;
-            position:relative;
-            border:4px solid var(--gold);
-            z-index: 10; /* ヘッダーより手前に */
+        .container {
+            width: 95%;
+            max-width: 800px;
+            margin: -40px auto 40px; /* ヘッダーに重ねる */
+            background: white;
+            padding: 40px;
+            border-radius: 4px; /* 角を少しだけ丸くして高級感を */
+            box-shadow: 0 20px 50px rgba(93, 64, 55, 0.2);
+            flex: 1;
+            position: relative;
+            border: 1px solid var(--gold);
+            z-index: 10;
+        }
+        /* コンテナの四隅に飾り枠をつける */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px solid var(--gold);
+            pointer-events: none;
         }
         
-        input{padding:15px;width:100%;border:3px solid #eee;border-radius:15px;font-size:18px;margin:20px 0;box-shadow:inset 0 4px 8px rgba(0,0,0,0.1);background:#fffaf0;}
-        button{background:var(--main);color:white;border:none;padding:15px 30px;border-radius:50px;cursor:pointer;font-weight:bold;font-size:18px;margin:10px 5px;box-shadow:0 6px 12px rgba(0,0,0,0.2); transition: all 0.2s;}
-        button:hover{background:#d35400;transform:translateY(-2px);}
-        .random-btn{background:#95a5a6;}
-        .random-btn:hover{background:#7f8c8d;}
-        
-        .tags{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;justify-content:center;}
-        .tag{background:var(--sub);color:white;padding:8px 20px;border-radius:50px;font-size:15px;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
-        
-        .result{margin-top:40px;padding:30px;background:var(--light);border-radius:25px;display:none;position:relative;border:4px dashed var(--gold);}
-        
-        /* ミニ先駆：吹き出し（::after）を削除してスッキリさせたよ */
-        .senku-mini{
-            position:absolute;
-            bottom:-60px;
-            right:10px;
-            width:120px;
-            height:120px;
-            background:var(--main);
-            border-radius:50%;
-            background-image:url('senku-mini.png');
-            background-size:cover;
-            z-index:10;
-            box-shadow:0 10px 20px rgba(0,0,0,0.4);
-            border:4px solid var(--gold);
+        .input-label {
+            text-align: center;
+            color: var(--brown);
+            font-size: 18px;
+            margin: 20px 0 10px;
+            font-weight: bold;
         }
         
-        /* レシピカードのデザイン調整（スマホで見やすく） */
-        .dish{
-            background:white;
-            padding:20px;
-            margin:20px 0;
-            border-radius:20px;
-            border-left:8px solid var(--accent);
-            box-shadow:0 5px 15px rgba(0,0,0,0.15);
-            border-top:2px solid var(--gold);
-            border-bottom:2px solid var(--gold);
+        input {
+            padding: 18px;
+            width: 100%;
+            border: 2px solid #ddd;
+            border-bottom: 4px solid var(--gold); /* 下線だけ強調 */
+            border-radius: 5px;
+            font-size: 20px;
+            font-family: inherit; /* 明朝体を引き継ぐ */
+            background: #fffbf0;
+            transition: all 0.3s;
+            text-align: center;
         }
-        .name{font-size:24px;font-weight:900;color:var(--accent);text-align:center;margin-bottom:10px;line-height:1.4;}
-        .info{font-size:15px;color:#777;text-align:center;margin:10px 0;}
-        .ingredients{background:#f8f8f8;padding:15px;border-radius:12px;font-size:16px;margin:15px 0;border:2px dotted var(--main); line-height: 1.6;}
-        .steps{line-height:2;margin:20px 0;font-size:16px;}
-        .steps ol { padding-left: 20px; margin: 0; }
-        .steps li { margin-bottom: 10px; }
-        
-        .comment{font-style:italic;color:#555;background:#f0f0f0;padding:20px;border-radius:15px;font-size:16px;margin:25px 0;border-left:6px solid var(--main);box-shadow:0 3px 6px rgba(0,0,0,0.1);}
-        
-        .action-buttons{display:flex;gap:15px;justify-content:center;margin:30px 0;flex-wrap:wrap;}
-        .copy-btn,.share-btn{background:#3498db;color:white;padding:12px 30px;border-radius:50px;font-size:18px;cursor:pointer;box-shadow:0 5px 10px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 8px;}
-        .share-btn{background:#2ecc71;}
-        
-        footer{text-align:center;padding:50px 20px;background:#fff8f0;border-top:5px solid var(--gold); margin-top: auto;}
-        .back-top{background:var(--main);color:white;padding:15px 40px;border-radius:50px;font-size:18px;text-decoration:none;display:inline-block;margin:20px;box-shadow:0 8px 15px rgba(0,0,0,0.3);}
-        .rakuten-banner{margin:30px auto;padding:15px;background:#fffaf0;border:3px solid var(--gold);border-radius:20px; max-width: 90%;}
+        input:focus {
+            outline: none;
+            background: white;
+            border-color: var(--main);
+        }
 
-        /* ★スマホ対応（レスポンシブ） */
+        .btn-area { text-align: center; margin: 35px 0; }
+        
+        button {
+            background: linear-gradient(to bottom, var(--gold), #a67c00);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 2px; /* カチッとしたボタン */
+            cursor: pointer;
+            font-weight: 900;
+            font-size: 20px;
+            font-family: 'Zen Old Mincho', serif;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(184, 134, 11, 0.4);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 50%;
+            background: rgba(255,255,255,0.2);
+        }
+        button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(184, 134, 11, 0.6); }
+        
+        .random-btn {
+            background: linear-gradient(to bottom, #95a5a6, #7f8c8d);
+            font-size: 16px;
+            padding: 16px 30px;
+        }
+        
+        .tags { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; justify-content: center; }
+        .tag {
+            background: white;
+            color: var(--brown);
+            border: 1px solid var(--gold);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+        
+        .result {
+            margin-top: 40px;
+            padding: 0; /* 内部のdishで余白を取る */
+            background: transparent;
+            display: none;
+            position: relative;
+        }
+        
+        .senku-mini {
+            position: absolute;
+            bottom: -60px;
+            right: 0px;
+            width: 130px;
+            height: 130px;
+            background: var(--main);
+            border-radius: 50%;
+            background-image: url('senku-mini.png');
+            background-size: cover;
+            z-index: 15;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            border: 5px solid white;
+        }
+        
+        /* レシピカード（メニュー表風） */
+        .dish {
+            background: white;
+            padding: 40px;
+            border: 1px solid #eee;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            background-image: radial-gradient(#d4a017 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-color: #fffcf5;
+        }
+        /* 紙の装飾 */
+        .dish::before, .dish::after {
+            content: "";
+            position: absolute;
+            height: 2px;
+            background: var(--gold);
+            left: 20px; right: 20px;
+        }
+        .dish::before { top: 20px; }
+        .dish::after { bottom: 20px; }
+
+        .name {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--brown);
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 3px double var(--gold);
+            display: inline-block;
+            padding-bottom: 5px;
+            width: 100%;
+        }
+        .info { font-size: 16px; color: #777; text-align: center; margin: 15px 0; font-family: sans-serif; }
+        
+        .ingredients {
+            background: white;
+            padding: 20px;
+            border: 1px solid var(--gold);
+            margin: 20px 0;
+            font-size: 17px;
+            line-height: 1.8;
+            box-shadow: 3px 3px 0 rgba(212, 160, 23, 0.2);
+        }
+        .steps { line-height: 2.2; margin: 25px 0; font-size: 17px; text-align: justify; }
+        .steps ol { padding-left: 25px; }
+        
+        .comment {
+            font-style: italic;
+            color: var(--brown);
+            background: #f0e6d2;
+            padding: 20px;
+            border-radius: 0 20px 0 20px;
+            font-size: 18px;
+            margin: 30px 0;
+            border-left: 5px solid var(--main);
+            position: relative;
+        }
+        .comment::before {
+            content: "\f10d"; /* quote icon */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            top: -15px; left: 10px;
+            font-size: 30px;
+            color: var(--main);
+            background: #f0e6d2;
+            padding: 0 10px;
+        }
+        
+        .action-buttons { display: flex; gap: 15px; justify-content: center; margin: 30px 0; flex-wrap: wrap; }
+        .copy-btn, .share-btn {
+            background: #34495e;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 8px;
+            font-family: sans-serif;
+            transition: 0.2s;
+        }
+        .share-btn { background: #27ae60; }
+        .copy-btn:hover, .share-btn:hover { opacity: 0.9; transform: scale(1.05); }
+        
+        footer { text-align: center; padding: 40px 20px; background: #3e2723; color: #d7ccc8; margin-top: auto; }
+        .back-top {
+            color: var(--gold);
+            text-decoration: none;
+            border: 1px solid var(--gold);
+            padding: 10px 20px;
+            display: inline-block;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+        .back-top:hover { background: var(--gold); color: #3e2723; }
+        .rakuten-banner { margin: 20px auto; padding: 10px; background: white; border-radius: 10px; max-width: 90%; display: inline-block; }
+
+        /* スマホ対応 */
         @media(max-width:600px){
-            .header { padding: 30px 10px; }
-            .title-box { padding: 15px 20px; border-width: 4px; width: 95%; }
-            .title-main{font-size:28px; letter-spacing: 1px;}
-            .fa-utensils { font-size: 20px; margin: 0 5px; } /* アイコンサイズ調整 */
-            
-            .senku-main{width:220px;height:293px;}
+            .title-upper { font-size: 20px; }
+            .title-lower { font-size: 36px; letter-spacing: 2px; }
+            .header { padding-bottom: 0; }
+            .senku-main { width: 240px; height: 320px; margin-bottom: -30px; position: relative; z-index: 12;}
             
             .container { 
-                padding: 20px; /* 余白を減らす */
-                margin-top: -20px;
-                border-width: 3px;
+                padding: 25px 20px; 
+                margin-top: 0; 
+                border: none; 
+                box-shadow: none; 
+                border-top: 5px solid var(--gold);
             }
+            .container::before { display: none; }
             
-            .result { padding: 20px; }
-            .senku-mini{width:90px;height:90px;bottom:-45px;right:0;}
+            .dish { padding: 25px 15px; }
+            .name { font-size: 24px; }
             
-            .name{font-size:22px;}
-            .dish { padding: 15px; }
-            .steps, .ingredients, .comment { font-size: 15px; }
-            
-            input { font-size: 16px; padding: 12px; }
-            button { padding: 12px 25px; font-size: 16px; width: 100%; margin: 5px 0; } /* ボタンを縦並びいっぱいに */
+            button { width: 100%; margin: 5px 0; padding: 14px; font-size: 18px; }
+            .senku-mini { width: 100px; height: 100px; bottom: -50px; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <!-- 豪華な枠付きタイトル -->
         <div class="title-box">
-            <h1 class="title-main">
-                <i class="fas fa-utensils"></i>
-                <ruby>先駆<rt>せんく</rt></ruby>シェフの献立メーカー
-                <i class="fas fa-utensils"></i>
-            </h1>
-            <div class="title-sub">～冷蔵庫にあるもので即決～</div>
+            <!-- タイトルを2段に変更 -->
+            <span class="title-upper">先駆シェフの</span>
+            <span class="title-lower">献立メーカー</span>
+            <div class="title-sub"><i class="fas fa-utensils"></i> 冷蔵庫にあるもので即決 <i class="fas fa-utensils"></i></div>
         </div>
         <div class="senku-main" id="senkuMain"></div>
     </div>
 
     <div class="container">
-        <p style="text-align:center;color:#777;font-size:18px;margin:20px 0;">冷蔵庫にある食材を<br>スペースで区切って入れてくれ</p>
-        <input type="text" id="input" placeholder="例：鶏もも肉 玉ねぎ 卵" autofocus>
-        <div style="text-align:center;margin:30px 0;">
-            <button onclick="search()"><i class="fas fa-search"></i> 献立を決める</button>
-            <button class="random-btn" onclick="randomMenu()"><i class="fas fa-dice"></i> 今日の俺の気分</button>
+        <div class="input-label">
+            <i class="fas fa-carrot" style="color:var(--main);"></i> 食材を入れてください
         </div>
+        <p style="text-align:center;color:#888;font-size:14px;margin-bottom:15px;font-family:sans-serif;">（スペース区切りで複数可）</p>
+        
+        <input type="text" id="input" placeholder="例：鶏もも肉 玉ねぎ 卵" autofocus>
+        
+        <div class="btn-area">
+            <button onclick="search()"><i class="fas fa-search"></i> 献立を決める</button>
+            <button class="random-btn" onclick="randomMenu()"><i class="fas fa-dice"></i> 気分で決める</button>
+        </div>
+        
         <div class="tags" id="tags"></div>
 
         <div class="result" id="result">
             <div id="dish-output"></div>
-            <!-- 「にやって」の文字はCSS削除で消えたよ！ -->
             <div class="senku-mini" id="miniSenku" style="display:none;"></div>
             
-            <button onclick="search()" style="margin-top:30px;background:#7f8c8d;width:100%;"><i class="fas fa-redo"></i> 別の案をくれ</button>
+            <button onclick="search()" style="margin-top:30px;background:linear-gradient(to bottom, #7f8c8d, #636e72);width:100%;"><i class="fas fa-redo"></i> 別の案をもらう</button>
         </div>
     </div>
 
@@ -189,26 +402,40 @@
                 <img src="https://hbb.afl.rakuten.co.jp/hsb/4e9240a2.33577567.3d95c766.8a7897b5/?me_id=1&me_adv_id=478973&t=pict" border="0" alt="楽天アフィリエイト" style="max-width:100%;">
             </a>
         </div>
+        <br>
         <a href="https://mofu-mitsu.github.io/" class="back-top"><i class="fas fa-home"></i> もふみつ工房 TOPへ戻る</a>
     </footer>
 
     <script>
         const normalize = (str) => str.trim();
 
-        // まばたきアニメ（メインのみ）
-        function blink() {
-            const main = document.getElementById('senkuMain');
-            if (main) {
-                main.style.backgroundImage = "url('senku-main-blink.png')";
-                setTimeout(() => {
-                    main.style.backgroundImage = "url('senku-main.png')";
-                }, 150);
-            }
-        }
-        setInterval(blink, 4500);
-        setTimeout(blink, 1800);
+        // ★表情管理ロジックを強化
+        let blinkInterval;
+        let isReacting = false; // リアクション中かどうかのフラグ
 
-        // レシピ決定時の表情変化
+        function setMainImage(filename) {
+            const main = document.getElementById('senkuMain');
+            if (main) main.style.backgroundImage = `url('${filename}')`;
+        }
+
+        function startBlinking() {
+            // 既に動いていたら一旦クリア
+            if (blinkInterval) clearInterval(blinkInterval);
+            
+            blinkInterval = setInterval(() => {
+                if (!isReacting) { // リアクション中でなければ瞬き
+                    setMainImage('senku-main-blink.png');
+                    setTimeout(() => {
+                        if (!isReacting) setMainImage('senku-main.png');
+                    }, 150);
+                }
+            }, 4500);
+        }
+
+        // 最初のまばたき開始
+        startBlinking();
+
+        // レシピ決定時の処理
         function showRandomDish() {
             const matched = [];
             if (!currentIngredients || currentIngredients.length === 0) return;
@@ -220,39 +447,63 @@
             }
 
             const output = document.getElementById('dish-output');
-            const main = document.getElementById('senkuMain');
             const mini = document.getElementById('miniSenku');
 
+            // ★ここで表情を変える！
+            isReacting = true; // まばたき停止
+
             if (matched.length === 0) {
-                output.innerHTML = '<div class="dish" style="text-align:center;">……ちょっと厳しい組み合わせだな。<br>でも冷蔵庫もう一回見てみろよ。</div>';
-                if (main) main.style.backgroundImage = "url('senku-main-majime.png')";
-                setTimeout(() => {
-                    if (main) main.style.backgroundImage = "url('senku-main.png')";
-                }, 3000);
+                // レシピがない時：真面目顔
+                setMainImage('senku-main-majime.png');
+                
+                output.innerHTML = `
+                    <div class="dish" style="text-align:center;">
+                        <i class="fas fa-exclamation-circle" style="font-size:40px;color:#bbb;margin-bottom:10px;"></i><br>
+                        <div class="name" style="border:none;font-size:24px;">……浮かばないな。</div>
+                        <p>その組み合わせは厳しい。<br>冷蔵庫、もう一回見てこいよ。</p>
+                    </div>`;
             } else {
+                // レシピがある時：ニヤリ顔
+                setMainImage('senku-main-niya.png');
+                
                 const dish = matched[Math.floor(Math.random() * matched.length)];
                 currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
 
                 output.innerHTML = `
                     <div class="dish">
                         <div class="name">${dish.name}</div>
-                        <div class="info"><i class="fas fa-chart-line"></i> ${dish.difficulty}　<i class="fas fa-clock"></i> 約${dish.time_min}分</div>
-                        <div class="ingredients"><strong><i class="fas fa-carrot"></i> 材料：</strong><br>${dish.ingredients.join("　／　")}</div>
-                        <div class="steps"><strong><i class="fas fa-fire"></i> 手順</strong><br><ol start="1">
-                            ${dish.steps.map(s => `<li>${s}</li>`).join('')}
-                        </ol></div>
-                        <div class="comment">「${dish.senku_comment}」</div>
+                        <div class="info">
+                            <span style="margin:0 10px;"><i class="fas fa-chart-line"></i> ${dish.difficulty}</span>
+                            <span style="margin:0 10px;"><i class="fas fa-clock"></i> 約${dish.time_min}分</span>
+                        </div>
+                        <div class="ingredients">
+                            <strong><i class="fas fa-carrot" style="color:var(--main);"></i> 材料</strong>
+                            <hr style="border:none;border-top:1px dashed #ccc;margin:5px 0 10px;">
+                            ${dish.ingredients.join("<br>")}
+                        </div>
+                        <div class="steps">
+                            <strong><i class="fas fa-fire" style="color:var(--accent);"></i> 手順</strong>
+                            <ol start="1">
+                                ${dish.steps.map(s => `<li>${s}</li>`).join('')}
+                            </ol>
+                        </div>
+                        <div class="comment">
+                             ${dish.senku_comment}
+                        </div>
                         <div class="action-buttons">
-                            <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> コピー</div>
-                            <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有</div>
+                            <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> レシピをコピー</div>
+                            <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有する</div>
                         </div>
                     </div>
                 `;
-                if (main) main.style.backgroundImage = "url('senku-main-niya.png')";
-                setTimeout(() => {
-                    if (main) main.style.backgroundImage = "url('senku-main.png')";
-                }, 3000);
             }
+
+            // 3秒後に通常顔＆まばたき再開
+            setTimeout(() => {
+                isReacting = false;
+                setMainImage('senku-main.png');
+            }, 3000);
+
             document.getElementById('result').style.display = 'block';
             mini.style.display = 'block';
             document.getElementById('result').scrollIntoView({behavior: "smooth"});
