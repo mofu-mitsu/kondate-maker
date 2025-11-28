@@ -87,6 +87,39 @@
         <a href="https://mofu-mitsu.github.io/" class="back-top">もふみつ工房 TOPへ戻る</a>
     </footer>
     <script>
+        // まばたきアニメ（メイン＋ミニ）
+        function blink() {
+            const main = document.getElementById('senkuMain');
+            const mini = document.getElementById('miniSenku');
+            if(main) main.style.backgroundImage = "url('senku-main-blink.png')";
+            if(mini && mini.style.display !== 'none') mini.style.backgroundImage = "url('senku-mini-blink.png')";
+            setTimeout(() => {
+                if(main) main.style.backgroundImage = "url('senku-main.png')";
+                if(mini && mini.style.display !== 'none') mini.style.backgroundImage = "url('senku-mini.png')";
+            }, 150);
+        }
+        setInterval(blink, 4000);
+        setTimeout(blink, 2000); // 最初少し早く
+
+        // レシピ決定時の表情変化
+        const originalShowRandomDish = showRandomDish;
+        showRandomDish = function() {
+            originalShowRandomDish();
+            const main = document.getElementById('senkuMain');
+            const mini = document.getElementById('miniSenku');
+            
+            // マッチしなかったとき
+            if(document.querySelector('.dish') && document.querySelector('.dish').textContent.includes('厳しい組み合わせ')) {
+                main.style.backgroundImage = "url('senku-main-majime.png')";
+            } else {
+                main.style.backgroundImage = "url('senku-main-niya.png')";
+            }
+            
+            mini.style.display = 'block';
+            setTimeout(() => {
+                main.style.backgroundImage = "url('senku-main.png')";
+            }, 3000);
+        };
         const normalize = text => text.replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
                                      .replace(/鶏肉|鶏もも|鶏もも肉/gi, "鶏もも肉")
                                      .replace(/豚肉|豚バラ|豚こま/gi, "豚肉")
