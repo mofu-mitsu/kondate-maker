@@ -524,7 +524,7 @@
                 const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
                 
                 // 【修正点】hitCount > 0 を追加！これで「カスりもしないレシピ」は除外される！
-                if (hitCount === normalizedPair.length) {
+                if (hitCount === normalizedPair.length && currentIngredients.length === normalizedPair.length) {
                     matched.push(...pair.recipes);
                 }
             }
