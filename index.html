@@ -419,199 +419,213 @@
     </footer>
 
 <script>
-        // ★★★ 文字列を整える関数 ★★★
-        const normalize = (str) => {
-            return str
-                .replace(/玉ねぎ|玉ネギ|タマネギ|玉葱/gi, "玉ねぎ")
-                // 鶏もも肉が「鶏もも肉肉」にならないように順番変更
-                .replace(/鶏もも肉|鶏もも|鶏肉/gi, "鶏もも肉")
-                .replace(/豚バラ|豚こま|豚肉/gi, "豚肉")
-                .replace(/人参|ニンジン/gi, "にんじん")
-                .replace(/ラムチョップ|ラム肉|ラム|羊肉/gi, "ラム肉")
-                .replace(/長ネギ|長ねぎ|ネギ/gi, "ねぎ")
-                .replace(/ほうれん草|ホウレン草/gi, "ほうれん草")
-                .replace(/サケ|さけ|鮭/gi, "鮭")
-                // ここ修正！「牛もつ」を先に検知させる！
-                .replace(/牛もつ|牛モツ|もつ|モツ|ホルモン/gi, "牛もつ")
-                .replace(/ツナ缶|シーチキン|ツナ/gi, "ツナ")
-                .replace(/さば|鯖/gi, "さば")
-                .trim();
-        };
+    // ★★★ 文字列を整える関数（ここを強化したよ！） ★★★
+    const normalize = (str) => {
+        if (!str) return "";
+        return str
+            // カタカナ・漢字・ひらがなの揺れを吸収
+            .replace(/玉ねぎ|玉ネギ|タマネギ|玉葱|たまねぎ/gi, "玉ねぎ")
+            .replace(/鶏もも肉|鶏もも|鶏肉|トリモモ|とりもも/gi, "鶏もも肉")
+            .replace(/豚バラ|豚こま|豚肉|ブタ肉|ぶた肉/gi, "豚肉")
+            .replace(/人参|ニンジン|にんじん/gi, "にんじん")
+            .replace(/ラムチョップ|ラム肉|ラム|羊肉/gi, "ラム肉")
+            .replace(/長ネギ|長ねぎ|ネギ|ねぎ|白ネギ/gi, "ねぎ")
+            .replace(/ほうれん草|ホウレン草|法蓮草/gi, "ほうれん草")
+            .replace(/サケ|さけ|鮭|サーモン/gi, "鮭")
+            .replace(/牛もつ|牛モツ|もつ|モツ|ホルモン/gi, "牛もつ")
+            .replace(/ツナ缶|シーチキン|ツナ/gi, "ツナ")
+            .replace(/さば|鯖|サバ/gi, "さば")
+            .replace(/ミンチ|ひき肉|挽肉/gi, "ひき肉")
+            .replace(/じゃがいも|ジャガイモ|ポテト/gi, "じゃがいも")
+            .replace(/ナス|なす|茄子/gi, "なす")
+            // 余計な空白を削除
+            .trim();
+    };
 
-        // ★★★ 表情管理ロジック ★★★
-        let blinkInterval;
-        let isReacting = false; 
+    // ★★★ 表情管理ロジック ★★★
+    let blinkInterval;
+    let isReacting = false; 
 
-        function setMainImage(filename) {
-            const main = document.getElementById('senkuMain');
-            if (main) main.style.backgroundImage = `url('${filename}')`;
-        }
+    function setMainImage(filename) {
+        const main = document.getElementById('senkuMain');
+        if (main) main.style.backgroundImage = `url('${filename}')`;
+    }
 
-        function startBlinking() {
-            if (blinkInterval) clearInterval(blinkInterval);
-            blinkInterval = setInterval(() => {
-                if (!isReacting) {
-                    setMainImage('senku-main-blink.png');
-                    setTimeout(() => {
-                        if (!isReacting) setMainImage('senku-main.png');
-                    }, 150);
-                }
-            }, 4500);
-        }
+    function startBlinking() {
+        if (blinkInterval) clearInterval(blinkInterval);
+        blinkInterval = setInterval(() => {
+            if (!isReacting) {
+                setMainImage('senku-main-blink.png');
+                setTimeout(() => {
+                    if (!isReacting) setMainImage('senku-main.png');
+                }, 150);
+            }
+        }, 4500);
+    }
 
-        startBlinking();
+    startBlinking();
 
-        // ★★★ 共通：レシピを画面に表示する関数 ★★★
-        function renderDish(dish) {
-            const output = document.getElementById('dish-output');
-            const mini = document.getElementById('miniSenku');
+    // ★★★ 共通：レシピを画面に表示する関数 ★★★
+    function renderDish(dish) {
+        const output = document.getElementById('dish-output');
+        const mini = document.getElementById('miniSenku');
 
-            isReacting = true; 
-            setMainImage('senku-main-niya.png'); // ニヤリ顔
-            
-            // コピー用テキスト作成
-            currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
+        isReacting = true; 
+        setMainImage('senku-main-niya.png'); // ニヤリ顔
+        
+        // コピー用テキスト作成
+        currentDishText = `${dish.name}\n難易度：${dish.difficulty}　約${dish.time_min}分\n\n【材料】\n${dish.ingredients.join("\n")}\n\n【手順】\n${dish.steps.map((s,i)=>`${i+1}. ${s}`).join("\n")}\n\n「${dish.senku_comment}」`;
 
-            // HTML生成
-            output.innerHTML = `
-                <div class="dish">
-                    <div class="name">${dish.name}</div>
-                    <div class="info">
-                        <span style="margin:0 10px;"><i class="fas fa-chart-line"></i> ${dish.difficulty}</span>
-                        <span style="margin:0 10px;"><i class="fas fa-clock"></i> 約${dish.time_min}分</span>
-                    </div>
-                    <div class="ingredients">
-                        <strong><i class="fas fa-carrot" style="color:var(--main);"></i> 材料</strong>
-                        <hr style="border:none;border-top:1px dashed #ccc;margin:5px 0 10px;">
-                        ${dish.ingredients.join("<br>")}
-                    </div>
-                    <div class="steps">
-                        <strong><i class="fas fa-fire" style="color:var(--accent);"></i> 手順</strong>
-                        <ol start="1">
-                            ${dish.steps.map(s => `<li>${s}</li>`).join('')}
-                        </ol>
-                    </div>
-                    <div class="comment">
-                            ${dish.senku_comment}
-                    </div>
-                    <div class="action-buttons">
-                        <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> レシピをコピー</div>
-                        <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有する</div>
-                    </div>
+        // HTML生成
+        output.innerHTML = `
+            <div class="dish">
+                <div class="name">${dish.name}</div>
+                <div class="info">
+                    <span style="margin:0 10px;"><i class="fas fa-chart-line"></i> ${dish.difficulty}</span>
+                    <span style="margin:0 10px;"><i class="fas fa-clock"></i> 約${dish.time_min}分</span>
                 </div>
-            `;
+                <div class="ingredients">
+                    <strong><i class="fas fa-carrot" style="color:var(--main);"></i> 材料</strong>
+                    <hr style="border:none;border-top:1px dashed #ccc;margin:5px 0 10px;">
+                    ${dish.ingredients.join("<br>")}
+                </div>
+                <div class="steps">
+                    <strong><i class="fas fa-fire" style="color:var(--accent);"></i> 手順</strong>
+                    <ol start="1">
+                        ${dish.steps.map(s => `<li>${s}</li>`).join('')}
+                    </ol>
+                </div>
+                <div class="comment">
+                        ${dish.senku_comment}
+                </div>
+                <div class="action-buttons">
+                    <div class="copy-btn" onclick="copyOnly()"><i class="far fa-copy"></i> レシピをコピー</div>
+                    <div class="share-btn" onclick="shareRecipe()"><i class="fas fa-share-alt"></i> 共有する</div>
+                </div>
+            </div>
+        `;
 
-            // 3秒後に真顔に戻る
-            setTimeout(() => {
-                isReacting = false;
-                setMainImage('senku-main.png');
-            }, 3000);
+        // 3秒後に真顔に戻る
+        setTimeout(() => {
+            isReacting = false;
+            setMainImage('senku-main.png');
+        }, 3000);
 
-            // 表示エリアを出す
-            document.getElementById('result').style.display = 'block';
-            mini.style.display = 'block';
-            document.getElementById('result').scrollIntoView({behavior: "smooth"});
-        }
+        // 表示エリアを出す
+        document.getElementById('result').style.display = 'block';
+        mini.style.display = 'block';
+        document.getElementById('result').scrollIntoView({behavior: "smooth"});
+    }
 
-        // ★★★ 検索ロジック（ここを修正しました！） ★★★
-        function showRandomDish() {
-            const matched = [];
-            if (!currentIngredients || currentIngredients.length === 0) return;
+    // ★★★ 検索ロジック（ここを大幅改良したよ！） ★★★
+    function showRandomDish() {
+        if (!currentIngredients || currentIngredients.length === 0) return;
 
-            for (const pair of data.pairs) {
-                const normalizedPair = pair.ingredients.map(normalize);
-                // 入力された食材が、レシピの食材にどれだけ含まれているかカウント
-                const hitCount = normalizedPair.filter(i => currentIngredients.includes(i)).length;
-                
-                // 【修正点】hitCount > 0 を追加！これで「カスりもしないレシピ」は除外される！
-                if (hitCount === normalizedPair.length && currentIngredients.length === normalizedPair.length) {
-                    matched.push(...pair.recipes);
-                }
-            }
-
-            if (matched.length === 0) {
-                // 見つからない時の処理
-                isReacting = true;
-                setMainImage('senku-main-majime.png');
-                const output = document.getElementById('dish-output');
-                output.innerHTML = `
-                    <div class="dish" style="text-align:center;">
-                        <i class="fas fa-exclamation-circle" style="font-size:40px;color:#bbb;margin-bottom:10px;"></i><br>
-                        <div class="name" style="border:none;font-size:24px;">……浮かばないな。</div>
-                        <p>……ちょっと厳しい組み合わせだな。<br>その食材はまだ俺のデータベースにないかもな。</p>
-                    </div>`;
-                document.getElementById('result').style.display = 'block';
-                setTimeout(() => { isReacting = false; setMainImage('senku-main.png'); }, 3000);
-            } else {
-                // 見つかったら表示関数へ
-                const dish = matched[Math.floor(Math.random() * matched.length)];
-                renderDish(dish);
-            }
-        }
-
-        // ★★★ 俺の気分（ランダム）ボタンの処理 ★★★
-        function randomMenu() {
-            const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
-            
-            // 入力欄とタグの見た目を更新
-            document.getElementById('input').value = randomPair.ingredients.join(" ");
-            currentIngredients = randomPair.ingredients;
-            updateTags();
-
-            // ペアの中から直接レシピを選ぶ
-            const dish = randomPair.recipes[Math.floor(Math.random() * randomPair.recipes.length)];
-            renderDish(dish);
-        }
-
-        // 入力やタグ関連の処理
-        let currentIngredients = [];
-        let currentDishText = "";
-
-        document.getElementById('input').addEventListener('keypress', e => {
-            if (e.key === 'Enter') search();
+        // 1. 全レシピを「pairs」の枠を超えて1つのリストにまとめる
+        let allRecipes = [];
+        data.pairs.forEach(pair => {
+            allRecipes.push(...pair.recipes);
         });
 
-        function search() {
-            const raw = document.getElementById('input').value.trim();
-            if (!raw) return;
-            currentIngredients = raw.split(/\s+/).map(normalize);
-            updateTags();
-            showRandomDish();
-        }
+        // 2. 検索条件に合うレシピだけをフィルタリング
+        const matched = allRecipes.filter(dish => {
+            // レシピ側の材料リストを文字列にして、それも「正規化（置換）」する！
+            // これで「玉ねぎ」と「タマネギ」が違ってもマッチするようになるよ
+            const recipeIngredientsText = normalize(dish.ingredients.join(" "));
 
-        function updateTags() {
-            const tagsDiv = document.getElementById('tags');
-            tagsDiv.innerHTML = '';
-            currentIngredients.forEach(t => {
-                const tag = document.createElement('span');
-                tag.className = 'tag';
-                tag.textContent = t;
-                tagsDiv.appendChild(tag);
+            // 入力されたキーワードが「すべて」レシピ内に含まれているかチェック (AND検索)
+            // 1つでも入っていればOKにしたいなら .every を .some に変えればOKだけど、今回はANDにするね
+            return currentIngredients.every(inputIng => {
+                return recipeIngredientsText.includes(inputIng);
             });
-        }
+        });
 
-        function copyOnly() {
-            navigator.clipboard.writeText(currentDishText).then(() => {
-                alert("レシピをコピーしたぞ");
-            });
+        if (matched.length === 0) {
+            // 見つからない時の処理
+            isReacting = true;
+            setMainImage('senku-main-majime.png');
+            const output = document.getElementById('dish-output');
+            output.innerHTML = `
+                <div class="dish" style="text-align:center;">
+                    <i class="fas fa-exclamation-circle" style="font-size:40px;color:#bbb;margin-bottom:10px;"></i><br>
+                    <div class="name" style="border:none;font-size:24px;">……浮かばないな。</div>
+                    <p>……ちょっと厳しい組み合わせだな。<br>その食材はまだ俺のデータベースにないか、<br>またはその組み合わせの料理を知らないだけかもしれん。</p>
+                </div>`;
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('miniSenku').style.display = 'none';
+            document.getElementById('result').scrollIntoView({behavior: "smooth"});
+            setTimeout(() => { isReacting = false; setMainImage('senku-main.png'); }, 3000);
+        } else {
+            // 見つかったらランダムに1つ表示
+            const dish = matched[Math.floor(Math.random() * matched.length)];
+            renderDish(dish);
         }
+    }
 
-        function shareRecipe() {
-            if (navigator.share) {
-                navigator.share({
-                    title: "先駆シェフの献立",
-                    text: currentDishText
-                }).catch(() => fallbackCopy());
-            } else {
-                fallbackCopy();
-            }
-        }
+    // ★★★ 俺の気分（ランダム）ボタンの処理 ★★★
+    function randomMenu() {
+        const randomPair = data.pairs[Math.floor(Math.random() * data.pairs.length)];
+        
+        // 入力欄とタグの見た目を更新
+        document.getElementById('input').value = randomPair.ingredients.join(" ");
+        currentIngredients = randomPair.ingredients.map(normalize); // ここでも正規化しておく
+        updateTags();
 
-        function fallbackCopy() {
-            navigator.clipboard.writeText(currentDishText).then(() => {
-                alert("共有できない環境だからコピーしたぞ");
-            });
+        // ペアの中から直接レシピを選ぶ
+        const dish = randomPair.recipes[Math.floor(Math.random() * randomPair.recipes.length)];
+        renderDish(dish);
+    }
+
+    // 入力やタグ関連の処理
+    let currentIngredients = [];
+    let currentDishText = "";
+
+    document.getElementById('input').addEventListener('keypress', e => {
+        if (e.key === 'Enter') search();
+    });
+
+    function search() {
+        const raw = document.getElementById('input').value.trim();
+        if (!raw) return;
+        // 入力された値を正規化してリストにする
+        currentIngredients = raw.split(/\s+/).map(normalize);
+        updateTags();
+        showRandomDish();
+    }
+
+    function updateTags() {
+        const tagsDiv = document.getElementById('tags');
+        tagsDiv.innerHTML = '';
+        currentIngredients.forEach(t => {
+            const tag = document.createElement('span');
+            tag.className = 'tag';
+            tag.textContent = t;
+            tagsDiv.appendChild(tag);
+        });
+    }
+
+    function copyOnly() {
+        navigator.clipboard.writeText(currentDishText).then(() => {
+            alert("レシピをコピーしたぞ");
+        });
+    }
+
+    function shareRecipe() {
+        if (navigator.share) {
+            navigator.share({
+                title: "先駆シェフの献立",
+                text: currentDishText
+            }).catch(() => fallbackCopy());
+        } else {
+            fallbackCopy();
         }
+    }
+
+    function fallbackCopy() {
+        navigator.clipboard.writeText(currentDishText).then(() => {
+            alert("共有できない環境だからコピーしたぞ");
+        });
+    }
 
         // data定義
     const data = {
